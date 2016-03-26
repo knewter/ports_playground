@@ -10,6 +10,11 @@
       });
       app.ports.jsActions.send(1);
       window.app = app;
+      var incrementClickCount = 0;
+      app.ports.increment.subscribe(function(){
+        incrementClickCount += 1;
+        console.log("Increment has been clicked " + incrementClickCount + " times.");
+      });
     </script>
   </body>
 </html>

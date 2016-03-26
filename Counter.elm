@@ -4,6 +4,7 @@ import Html exposing (..)
 import StartApp
 import Html.Events exposing (onClick)
 import Effects exposing (Effects)
+import Task exposing (Task)
 
 type alias Model =
   { count     : Int
@@ -29,7 +30,7 @@ update action model =
             count = model.count + 1,
             increment = model.increment + 1
         }
-      , Effects.none
+      , sendToIncrementMailbox
       )
     Decrement ->
       ( { model |
@@ -78,4 +79,26 @@ mapJsAction int =
       NoOp
 
 
+incrementMailbox : Signal.Mailbox ()
+incrementMailbox =
+  Signal.mailbox ()
+
+
+sendToIncrementMailbox : Effects Action
+sendToIncrementMailbox =
+  Signal.send incrementMailbox.address ()
+  |> Effects.task
+  |> Effects.map (always NoOp)
+
+
+-- INPUT PORTS
 port jsActions : Signal Int
+
+-- OUTPUT PORTS
+port increment : Signal ()
+port increment =
+  incrementMailbox.signal
+
+port tasks : Signal (Task.Task Effects.Never ())
+port tasks =
+  app.tasks
