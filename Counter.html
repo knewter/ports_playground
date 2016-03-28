@@ -5,15 +5,22 @@
   <body>
     <script type="text/javascript" src="elm.js"></script>
     <script>
+      var currentCount = localStorage.getItem("counter");
       var app = Elm.fullscreen(Elm.Counter, {
-        jsActions: 0
+        jsActions: 0,
+        storageInput: 0
       });
-      app.ports.jsActions.send(1);
+      //app.ports.jsActions.send(1);
       window.app = app;
+      app.ports.storageInput.send(Number(currentCount));
+
       var incrementClickCount = 0;
       app.ports.increment.subscribe(function(){
         incrementClickCount += 1;
         console.log("Increment has been clicked " + incrementClickCount + " times.");
+      });
+      app.ports.storage.subscribe(function(data){
+        localStorage.setItem('counter', data);
       });
     </script>
   </body>
