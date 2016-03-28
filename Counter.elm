@@ -91,6 +91,18 @@ sendToIncrementMailbox =
   |> Effects.map (always NoOp)
 
 
+storageMailbox : Signal.Mailbox Int
+storageMailbox =
+  Signal.mailbox Int
+
+
+sendToStorageMailbox : Int -> Effects Action
+sendToStorageMailbox count =
+  Signal.send storageMailbox.address count
+  |> Effects.task
+  |> Effects.map (always NoOp)
+
+
 -- INPUT PORTS
 port jsActions : Signal Int
 
@@ -98,6 +110,11 @@ port jsActions : Signal Int
 port increment : Signal ()
 port increment =
   incrementMailbox.signal
+
+
+port storage : Signal Int
+  storageMailbox.signal
+
 
 port tasks : Signal (Task.Task Effects.Never ())
 port tasks =
